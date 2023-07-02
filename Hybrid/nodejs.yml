@@ -1,0 +1,17 @@
+---
+- name: NodeJS Installations in Linux Distros
+  become: yes
+  hosts: all
+  tasks:
+   - name: Install NodeJS on Ubuntu_20.04
+     ansible.builtin.apt:
+       name: nodejs
+       update_cache: yes
+       state: present
+     when: ansible_facts['os_family'] == "Debian"
+  - name: Install NodeJS on RedHat_8.3 (Ootpa)
+     ansible.builtin.dnf:
+       name: nodejs
+       update_cache: yes
+       state: present
+     when: ansible_facts['os_family'] == "RedHat"
