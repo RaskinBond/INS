@@ -19,6 +19,11 @@
         name: "{{ java_package }}"
         state: present
     
+    - name: Create a tomcat group
+      ansible.builtin.group:
+        name: "{{ username }}"
+        state: present
+    
     - name: Create a tomcat user
       ansible.builtin.user:
         name: "{{ username }}"
@@ -44,5 +49,16 @@
         path: "{{ tomcat_home_dir }}"
         owner: "{{ username }}"
         group: "{{ username }}"
+        recurse: yes
         mode: '0755'
+        state: directory
+    
+    - name: Create a sym-link
+      ansible.builtin.file:
+        src: "{{ tomcat_home_dir }}"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        state: link
+        
+        
 
