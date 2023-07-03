@@ -35,7 +35,7 @@
     
     - name: Untar the file 
       ansible.builtin.unarchive:
-        src: /tmp/apache-tomcat-{{ tomcat_version }}.tar.gz
+        src: "/tmp/apache-tomcat-{{ tomcat_version }}.tar.gz"
         dest: "{{ tomcat_home_dir }}"
         remote_src: yes
     
