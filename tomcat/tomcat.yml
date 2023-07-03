@@ -29,8 +29,8 @@
 
     - name: Download Tomcat
       ansible.builtin.get_url:
-      url: "https://dlcdn.apache.org/tomcat/tomcat-9/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
-      destination: "/tmp/apache-tomcat-{{ tomcat_version }}.tar.gz"
+        url: "https://dlcdn.apache.org/tomcat/tomcat-9/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
+        destination: "/tmp/apache-tomcat-{{ tomcat_version }}.tar.gz"
     
     - name: Untar the file 
       ansible.builtin.unarchive:
