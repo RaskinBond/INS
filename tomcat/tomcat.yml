@@ -87,7 +87,7 @@
   
     - name: Print all the files
       debug:
-        var: "{{ sh_files }}"
+        var: sh_files
  
 
 
