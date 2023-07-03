@@ -80,8 +80,8 @@
     
     - name: Search executable files
       ansible.builtin.find:
-        paths: "{{ tomcat_latest }}/bin/"
-        patterns: ".sh"
+        paths: "{{ tomcat_bin_dir }}"
+        patterns: "*.sh"
         recurse: yes
       register: sh_files
   
