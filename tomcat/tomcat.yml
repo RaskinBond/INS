@@ -55,7 +55,7 @@
     
     - name: Create a sym-link
       ansible.builtin.file:
-        src: "{{ tomcat_home_dir }}"
+        path: "{{ tomcat_home_dir }}"
         owner: "{{ username }}"
         group: "{{ username }}"
         state: link
