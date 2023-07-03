@@ -4,6 +4,6 @@
   hosts: AppServers
   tasks:
     - name: Install NodeJS on Ubuntu & RedHat
-      ansible.builtin.package:
+      package:
         name: "{{ package }}"
         state: present
