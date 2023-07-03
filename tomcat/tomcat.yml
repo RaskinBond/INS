@@ -1,7 +1,7 @@
 ---
-- name: Tomcat Installations in Linux Distros
+- name: Insstall Tomcat 9
   become: yes
-  hosts: AppServers
+  hosts: AppServer
   vars: 
     - username: tomcat
     - group: tomcat
@@ -14,7 +14,7 @@
       apt: 
         update_cache: yes
 
-    - name: Install java 
+    - name: Install openjdk 11 
       package:
         name: "{{ java_package }}"
         state: present
@@ -26,6 +26,7 @@
         shell: "{{ default_shell }}"
         home: "{{ tomcat_home_dir }}"
         create_home: yes
+        state: present
 
     - name: Download Tomcat
       ansible.builtin.get_url:
@@ -43,5 +44,5 @@
         path: "{{ tomcat_home_dir }}"
         owner: "{{ username }}"
         group: "{{ username }}"
-        mode: '0644'
+        mode: '0755'
 
