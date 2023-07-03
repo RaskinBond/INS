@@ -1,5 +1,5 @@
 ---
-- name: Insstall Tomcat 9
+- name: Install Tomcat 9
   become: yes
   hosts: AppServer
   vars: 
@@ -7,6 +7,9 @@
     - group: tomcat
     - default_shell: /bin/false
     - tomcat_home_dir: /opt/tomcat
+    - tomcat_latest: /opt/tomcat/latest
+    - tomcat_bin_dir: /opt/tomcat/latest/bin
+    - tomcat_service_location: /etc/systemd/system/tomcat.service
     - tomcat_version: 9.0.76
   
   tasks:
@@ -38,27 +41,45 @@
         url: "https://dlcdn.apache.org/tomcat/tomcat-9/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
         dest: "/tmp/apache-tomcat-{{ tomcat_version }}.tar.gz"
     
-    - name: Untar the file 
+    - name: Extract Tomcat
       ansible.builtin.unarchive:
         src: "/tmp/apache-tomcat-{{ tomcat_version }}.tar.gz"
         dest: "{{ tomcat_home_dir }}"
-        remote_src: yes
-    
-    - name: Update Permissions
-      ansible.builtin.file:
-        path: "{{ tomcat_home_dir }}"
+        creates: "{{ tomcat_home_dir }}/apache-tomcat-{{ tomcat_version }}"
         owner: "{{ username }}"
         group: "{{ username }}"
-        recurse: yes
-        mode: '0755'
-        state: directory
-    
+        remote_src: yes
+
     - name: Create a sym-link
       ansible.builtin.file:
-        path: "{{ tomcat_home_dir }}"
+        src: "{{ tomcat_home_dir }}/apache-tomcat-{{ tomcat_version }}"
+        dest: "{{ tomcat_latest }}"
         owner: "{{ username }}"
         group: "{{ username }}"
         state: link
-        
+
+    - name: Change ownership
+      ansible.builtin.file:
+        path: "{{ tomcat_home_dir }}"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        state: directory
+        recurse: yes
+    
+    - name: Search executable files
+      ansible.builtin.find:
+        paths: "{{ tomcat_latest }}/bin/"
+        patterns: ".sh"
+        recurse: yes
+      register: sh_files
+  
+    - name: Print all the files
+      debug:
+        var: "{{ sh_files }}"
+ 
+
+
+
+
         
 
