@@ -91,7 +91,7 @@
     
     - name: Make .sh files executables
       ansible.builtin.file:
-        path: "{{ item.path }}"
+        path: '{{ item.path }}'
         owner: foo
         group: foo
         mode: '0755'
