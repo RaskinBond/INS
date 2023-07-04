@@ -97,10 +97,16 @@
         mode: '0755'
       loop: "{{ sh_files_tomcat_bin.files }}"
       
- 
+    - name: copy tomcat.service
+      ansible.builtin.copy:
+        src: "tomcat.service"
+        dest: "{{ tomcat_service_location }}"
+        remote_src: yes
 
-
-
-
+    - name: Make sure a service unit is running
+      ansible.builtin.systemd:
+        name: tomcat.service
+        daemon_reload: yes
+        enabled: yes
+        state: started
         
-
