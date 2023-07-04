@@ -11,18 +11,6 @@
     - tomcat_bin_dir: /opt/tomcat/latest/bin
     - tomcat_service_location: /etc/systemd/system/tomcat.service
     - tomcat_version: 9.0.76
-    - executables:
-        - catalina.sh
-        - ciphers.sh
-        - configtest.sh
-        - daemon.sh
-        - digest.sh
-        - makebase.sh
-        - setclasspath.sh
-        - shutdown.sh
-        - startup.sh
-        - tool-wrapper.sh
-        - version.sh
 
   tasks:
     - name: Update apt repo & cache
@@ -99,11 +87,11 @@
       
     - name: copy tomcat.service
       ansible.builtin.copy:
-        src: "tomcat.service"
+        src: 'tomcat.service'
         dest: "{{ tomcat_service_location }}"
-        remote_src: yes
 
-    - name: Make sure a service unit is running
+
+    - name: reload the daemon, enable and start the tomcat service
       ansible.builtin.systemd:
         name: tomcat.service
         daemon_reload: yes
