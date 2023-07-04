@@ -83,11 +83,11 @@
         paths: "{{ tomcat_bin_dir }}"
         patterns: "*.sh"
         recurse: yes
-      register: sh_files
+      register: sh_files_tomcat_bin
   
     - name: Print all the files
       debug:
-        var: sh_files
+        var: sh_files_tomcat_bin
     
     - name: Make .sh files executables
       ansible.builtin.file:
@@ -95,7 +95,7 @@
         owner: "{{ username }}"
         group: "{{ username }}"
         mode: '0755'
-      loop: "{{ sh_files }}"
+      loop: "{{ sh_files_tomcat_bin.files }}"
       
  
 
