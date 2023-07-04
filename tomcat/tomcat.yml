@@ -95,7 +95,7 @@
         owner: foo
         group: foo
         mode: '0755'
-      loop: sh_files
+      loop: "{{ sh_files }}"
       
  
 
