@@ -88,6 +88,15 @@
     - name: Print all the files
       debug:
         var: sh_files
+    
+    - name: Make .sh files executables
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        owner: foo
+        group: foo
+        mode: '0755'
+      loop: sh_files
+      
  
 
 
