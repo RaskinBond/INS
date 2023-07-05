@@ -8,11 +8,15 @@
     - group: tomcat
     - default_shell: /bin/false
     - tomcat_home: /opt/tomcat
-    - tomcat_latest: /opt/tomcat/latest
+    - tomcat_latest: /opt/tomcat/latest/
     - tomcat_bin: /opt/tomcat/latest/bin
     - tomcat_service_location: /etc/systemd/system/tomcat.service
     - tomcat_users: conf/tomcat-users.xml
+    - manager_context: webapps/manager/META-INF/context.xml
     - tomcat_version: 9.0.76
+    - tomcat_allow_context_locations:
+        - /opt/tomcat/latest/webapps/manager/META-INF/context.xml
+        - /opt/tomcat/latest/webapps/host-manager/META-INF/context.xml
 
   tasks:
     - name: Update apt repo & cache
@@ -95,13 +99,24 @@
         owner: "{{ username }}"
         group: "{{ username }}"
 
-    - name: copy managers & users template
+    - name: copy tomcat users template
       ansible.builtin.template:
         src: 'tomcat-users.xml.j2'
         dest: "{{ tomcat_latest }}/{{ tomcat_users }}"
         owner: "{{ username }}"
         group: "{{ username }}"
 
+    - name: Allow manager & host manager from specidfied ip ranges
+      ansible.builtin.template:
+        src: 'manager-context.xml.j2'
+        dest: "{{ item }}"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+      loop: "{{ tomcat_allow_context_locations}}"
+      notify:
+        - reload the daemon, enable and start the tomcat service
+  
+  handlers:
     - name: reload the daemon, enable and start the tomcat service
       ansible.builtin.systemd:
         name: tomcat.service
