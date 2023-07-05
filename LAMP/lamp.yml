@@ -4,9 +4,6 @@
   hosts: WebServer
   vars:
     - php_location: /var/www/html
-    - service:
-        - httpd
-        - apaache2
 
   tasks:
     - name: Update apt repo & cache
