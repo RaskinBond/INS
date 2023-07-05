@@ -1,0 +1,87 @@
+---
+- name: Install Tomcat 9
+  become: yes
+  hosts: AppServer
+  vars:
+    - username: tomcat
+    - default_shell: /bin/false
+    - tomcat_home: /opt/tomcat
+    - tomcat_latest: /opt/tomcat/latest
+    - tomcat_bin: /opt/tomcat/latest/bin
+    - tomcat_version: 9.0.76
+    - tomcat_service_location: /etc/systemd/system/tomcat.service
+
+  tasks:
+    - name: Install openjdk 11 
+      package:
+        name: "{{ java_package }}"
+        state: present
+
+    - name: Create a tomcat user
+      ansible.builtin.user:
+        name: "{{ username }}"
+        group: "{{ username }}"
+        shell: "{{ default_shell }}"
+        home: "{{ tomcat_home }}"
+        create_home: yes
+        state: present
+
+    - name: Download Tomcat
+      ansible.builtin.get_url:
+        url: https://dlcdn.apache.org/tomcat/tomcat-9/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz
+        dest: /tmp/apache-tomcat-{{ tomcat_version }}.tar.gz
+        
+    - name: Extract Tar file
+      ansible.builtin.unarchive:
+        src: /tmp/apache-tomcat-{{ tomcat_version }}.tar.gz
+        dest: "{{ tomcat_home }}"
+        remote_src: yes
+
+    - name: Create a sym-link
+      ansible.builtin.file:
+        src: "{{ tomcat_home }}/apache-tomcat-{{ tomcat_version }}"
+        dest: "{{ tomcat_latest }}"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        state: link
+    
+    - name: Change ownership
+      ansible.builtin.file:
+        path: "{{ tomcat_home }}/apache-tomcat-{{ tomcat_version }}"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        state: directory
+        recurse: yes
+
+    - name: Search executable files
+      ansible.builtin.find:
+        paths: "{{ tomcat_bin }}"
+        patterns: "*.sh"
+        recurse: yes
+      register: sh_files_tomcat_bin
+  
+    - name: Print all the files
+      debug:
+        var: sh_files_tomcat_bin
+    
+    - name: Make .sh files executables
+      ansible.builtin.file:
+        path: '{{ item.path }}'
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0755'
+      loop: "{{ sh_files_tomcat_bin.files }}"
+
+    - name: copy service file
+      ansible.builtin.copy:
+        src: 'tomcat.service'
+        dest: "{{ tomcat_service_location }}"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+
+    - name: reload the daemon, enable and start the tomcat service
+      ansible.builtin.systemd:
+        name: tomcat.service
+        daemon_reload: yes
+        enabled: yes
+        state: started
