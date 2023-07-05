@@ -11,6 +11,9 @@
     - tomcat_latest: /opt/tomcat/latest
     - tomcat_bin: /opt/tomcat/latest/bin
     - tomcat_service_location: /etc/systemd/system/tomcat.service
+    - java_home: /usr/lib/jvm/java-11-openjdk-amd64
+    - tomcat_admin_user: devops
+    - tomcat_admin_password: devops
     - tomcat_users: conf/tomcat-users.xml
     - manager_context: webapps/manager/META-INF/context.xml
     - tomcat_version: 9.0.76
@@ -134,6 +137,8 @@
       ansible.builtin.get_url:
         url: "{{ deploy_url }}"
         dest: "{{ tomcat_latest }}/webapps/{{ deploy_file_name }}"
+        owner: "{{ username }}"
+        group: "{{ username }}"
       notify:
         - reload the daemon, enable and start the tomcat service
 
