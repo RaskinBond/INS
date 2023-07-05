@@ -1,0 +1,44 @@
+---
+- name: Install LAMP
+  become: yes
+  hosts: all
+  vars:
+    - php_location: /var/www/html
+
+  tasks:
+    - name: Update apt repo & cache
+      apt: 
+        update_cache: yes
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Install Apache
+      package:
+        name: "{{ apache_package }}"
+        state: present
+    
+    - name: Ensure httpd is running
+      ansible.builtin.systemd:
+        name: 'service'
+        state: 'started'
+        enabled: yes
+      when: ansible_facts['os_family'] == "RedHat"
+
+    - name: Install php
+      package:
+        name: php
+        state: present
+      notify:
+        - Reload Apache service
+
+    - name: Copy php file
+      ansible.builtin.copy:
+        src: 'info.php'
+        dest: "{{ php_location }}"
+
+  handlers:
+    - name: Reload Apache service
+      ansible.builtin.systemd:
+        name: 'service'
+        state: restarted
+        enabled: yes
+
