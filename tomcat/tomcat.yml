@@ -89,7 +89,7 @@
       
     - name: copy tomcat.service
       ansible.builtin.copy:
-        src: 'tomcat.service'
+        src: 'tomcat.service.j2'
         dest: "{{ tomcat_service_location }}"
         owner: "{{ username }}"
         group: "{{ username }}"
