@@ -35,6 +35,9 @@
       ansible.builtin.unarchive:
         src: /tmp/apache-tomcat-{{ tomcat_version }}.tar.gz
         dest: "{{ tomcat_home }}"
+        creates: "{{ tomcat_home }}/apache-tomcat-{{ tomcat_version }}"
+        owner: "{{ username }}"
+        group: "{{ username }}"
         remote_src: yes
 
     - name: Create a sym-link
@@ -47,7 +50,7 @@
     
     - name: Change ownership
       ansible.builtin.file:
-        path: "{{ tomcat_home }}/apache-tomcat-{{ tomcat_version }}"
+        path: "{{ tomcat_home }}"
         owner: "{{ username }}"
         group: "{{ username }}"
         state: directory
