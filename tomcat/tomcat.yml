@@ -101,7 +101,7 @@
         - reload the daemon, enable and start the tomcat service
 
     - name: Force all notified handlers to run at this point
-      meta: flush handlers
+      meta: flush_handlers
     
     - name: ensure tomcat service is running
       ansible.builtin.systemd:
