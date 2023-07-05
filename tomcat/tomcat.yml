@@ -90,14 +90,15 @@
         group: "{{ username }}"
         mode: '0755'
       loop: "{{ sh_files_tomcat_bin.files }}"
-
-      
+ 
     - name: copy tomcat.service template
       ansible.builtin.template:
         src: 'tomcat.service.j2'
         dest: "{{ tomcat_service_location }}"
         owner: "{{ username }}"
         group: "{{ username }}"
+      notify:
+        - reload the daemon, enable and start the tomcat service  
 
     - name: copy tomcat users template
       ansible.builtin.template:
@@ -105,6 +106,8 @@
         dest: "{{ tomcat_latest }}/{{ tomcat_users }}"
         owner: "{{ username }}"
         group: "{{ username }}"
+      notify:
+        - reload the daemon, enable and start the tomcat service  
 
     - name: Allow manager & host manager from specidfied ip ranges
       ansible.builtin.template:
