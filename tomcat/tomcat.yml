@@ -98,7 +98,15 @@
         owner: "{{ username }}"
         group: "{{ username }}"
       notify:
-        - reload the daemon, enable and start the tomcat service  
+        - reload the daemon, enable and start the tomcat service
+
+    - name: Force all notified handlers to run at this point
+      meta: flush handlers
+    
+    - name: ensure tomcat service is running
+      ansible.builtin.systemd:
+        name: 'tomcat.service'
+        state: 'started'
 
     - name: copy tomcat users template
       ansible.builtin.template:
