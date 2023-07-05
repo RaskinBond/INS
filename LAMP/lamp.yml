@@ -15,6 +15,9 @@
       package:
         name: "{{ apache_package }}"
         state: present
+
+    - name: Force all notified handlers to run at this point
+      meta: flush_handlers
     
     - name: Ensure httpd is running
       ansible.builtin.systemd:
