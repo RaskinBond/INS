@@ -74,16 +74,27 @@
         mode: '0755'
       loop: "{{ sh_files_tomcat_bin.files }}"
 
-    - name: copy service file
+    - name: copy tomcat.service file
       ansible.builtin.copy:
         src: 'tomcat.service'
         dest: "{{ tomcat_service_location }}"
         owner: "{{ username }}"
         group: "{{ username }}"
+      notify:
+        - reload the daemon, enable and start the tomcat service
 
+    - name: Force all notified handlers to run at this point
+      meta: flush_handlers
+    
+    - name: ensure tomcat service is running
+      ansible.builtin.systemd:
+        name: 'tomcat.service'
+        state: 'started'
+
+  handlers:
     - name: reload the daemon, enable and start the tomcat service
       ansible.builtin.systemd:
-        name: tomcat.service
+        name: 'tomcat.service'
         daemon_reload: yes
         enabled: yes
         state: started
