@@ -1,4 +1,4 @@
 [WebServer]
 
-172.31.32.164 apache_package=apache2 service: apache2
-172.31.42.132 apache_package=httpd service: httpd
+172.31.32.164 apache_package=apache2 service=apache2
+172.31.42.132 apache_package=httpd service=httpd
