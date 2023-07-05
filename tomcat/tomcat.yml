@@ -2,8 +2,7 @@
 - name: Install Tomcat 9
   become: yes
   hosts: AppServer
-  vars:
-    - java_home: /usr/lib/jvm/java-11-openjdk-amd64 
+  vars: 
     - username: tomcat
     - group: tomcat
     - default_shell: /bin/false
@@ -28,6 +27,7 @@
     - name: Update apt repo & cache
       apt: 
         update_cache: yes
+      when: ansible_facts['os_family'] == "Debian"
 
     - name: Install openjdk 11 
       package:
@@ -123,7 +123,7 @@
       notify:
         - reload the daemon, enable and start the tomcat service  
 
-    - name: Allow manager & host manager from specidfied ip ranges
+    - name: Allow manager & host manager from specified ip ranges
       ansible.builtin.template:
         src: 'manager-context.xml.j2'
         dest: "{{ item }}"
@@ -132,15 +132,7 @@
       loop: "{{ tomcat_allow_context_locations}}"
       notify:
         - reload the daemon, enable and start the tomcat service
-  
-    - name: deploy any war file
-      ansible.builtin.get_url:
-        url: "{{ deploy_url }}"
-        dest: "{{ tomcat_latest }}/webapps/{{ deploy_file_name }}"
-        owner: "{{ username }}"
-        group: "{{ username }}"
-      notify:
-        - reload the daemon, enable and start the tomcat service
+
 
   handlers:
     - name: reload the daemon, enable and start the tomcat service
