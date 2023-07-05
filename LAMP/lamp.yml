@@ -1,9 +1,12 @@
 ---
 - name: Install LAMP
   become: yes
-  hosts: all
+  hosts: WebServer
   vars:
     - php_location: /var/www/html
+    - service:
+        - httpd
+        - apaache2
 
   tasks:
     - name: Update apt repo & cache
@@ -16,15 +19,15 @@
         name: "{{ apache_package }}"
         state: present
 
-    - name: Force all notified handlers to run at this point
-      meta: flush_handlers
-    
     - name: Ensure httpd is running
       ansible.builtin.systemd:
         name: "{{ service }}"
-        state: 'started'
+        state: started
         enabled: yes
       when: ansible_facts['os_family'] == "RedHat"
+
+    - name: Force all notified handlers to run at this point
+      meta: flush_handlers
 
     - name: Install php
       package:
