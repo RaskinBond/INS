@@ -21,7 +21,7 @@
     
     - name: Ensure httpd is running
       ansible.builtin.systemd:
-        name: 'service'
+        name: "{{ service }}"
         state: 'started'
         enabled: yes
       when: ansible_facts['os_family'] == "RedHat"
@@ -41,7 +41,7 @@
   handlers:
     - name: Reload Apache service
       ansible.builtin.systemd:
-        name: 'service'
+        name: "{{ service }}"
         state: restarted
         enabled: yes
 
