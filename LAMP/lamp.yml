@@ -1,10 +1,10 @@
 ---
-- name: Install LAMP
+- name: Install LAMP Stack
   become: yes
   hosts: WebServers
   
   tasks:
-    - name: Update Debian packages
+    - name: Update Ubuntu packages
       apt: 
         update_cache: yes
       when: ansible_facts['os_family'] == "Debian"
@@ -13,16 +13,8 @@
       package:
         name: "{{ apache_package }}"
         state: present
-
-    - name: Ensure httpd is running
-      ansible.builtin.systemd:
-        name: "{{ service }}"
-        state: started
-        enabled: yes
-      when: ansible_facts['os_family'] == "RedHat"
-
-    - name: Force all notified handlers to run at this point
-      meta: flush_handlers
+      notify:
+        - Ensure Apache is enabled & started        
 
     - name: Install php
       package:
@@ -30,17 +22,19 @@
         state: present
       loop: "{{ php_packages }}"  
       notify:
-        - Reload Apache service
+        - Ensure Apache is enabled & started
 
-    - name: Copy php file
+    - name: Copy the php file
       ansible.builtin.copy:
         src: 'info.php'
         dest: "{{ php_location }}"
+      notify:
+        - Ensure Apache is enabled & started  
 
   handlers:
-    - name: Reload Apache service
-      ansible.builtin.systemd:
-        name: "{{ service }}"
-        state: restarted
+    - name: Ensure Apache is enabled & started
+      ansible.builtin.service:
+        name: "{{ apache_package }}"
         enabled: yes
+        state: started
 
