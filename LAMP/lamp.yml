@@ -1,12 +1,10 @@
 ---
 - name: Install LAMP
   become: yes
-  hosts: WebServer
-  vars:
-    - php_location: /var/www/html
-
+  hosts: WebServers
+  
   tasks:
-    - name: Update apt repo & cache
+    - name: Update Debian packages
       apt: 
         update_cache: yes
       when: ansible_facts['os_family'] == "Debian"
@@ -28,8 +26,9 @@
 
     - name: Install php
       package:
-        name: php
+        name: "{{ item }}"
         state: present
+      loop: "{{ php_packages }}"  
       notify:
         - Reload Apache service
 
