@@ -1,0 +1,17 @@
+username: tomcat
+group: tomcat
+default_shell: /bin/false
+tomcat_home: /opt/tomcat
+tomcat_latest: /opt/tomcat/latest
+tomcat_bin: /opt/tomcat/latest/bin
+tomcat_service_location: /etc/systemd/system/tomcat.service
+tomcat_admin_user: devops
+tomcat_admin_password: devops
+tomcat_users: conf/tomcat-users.xml
+manager_context: webapps/manager/META-INF/context.xml
+tomcat_version: 9.0.76
+tomcat_allow_context_locations:
+  - /opt/tomcat/latest/webapps/manager/META-INF/context.xml
+  - /opt/tomcat/latest/webapps/host-manager/META-INF/context.xml
+deploy_file_name: jenkins.war
+deploy_url: https://get.jenkins.io/war-stable/2.401.2/jenkins.war
